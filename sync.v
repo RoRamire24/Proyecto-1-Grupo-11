@@ -135,8 +135,8 @@ module sync(
     
     assign pixel_x = hcount;
     assign pixel_y = vcount;
-    assign hsync = ~h_sync;
-    assign vsync = ~v_sync;
+    assign hsync = h_sync;
+    assign vsync = v_sync;
     assign clk_25m = clk_d;
     
 endmodule
