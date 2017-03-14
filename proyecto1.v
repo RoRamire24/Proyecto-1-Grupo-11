@@ -25,10 +25,12 @@ module proyecto1(
     input wire [2:0] rgbswitches,
     output reg [2:0] rgbtext,
     output wire hsync, vsync
+    //output [8:0] nousar
     );
     
+   // wire nouso = 9'b000000000;
     wire clk_25m;
-    
+    //assign nousar = nouso;
     wire video_on;
     
     wire [9:0] pixel_x, pixel_y;    
@@ -140,8 +142,8 @@ module proyecto1(
     
     assign pixel_x = hcount;
     assign pixel_y = vcount;
-    assign hsync = h_sync;
-    assign vsync = v_sync;
+    assign hsync = ~h_sync;
+    assign vsync = ~v_sync;
     assign clk_25m = clk_d;
     
     
@@ -154,7 +156,7 @@ module proyecto1(
     
     wire [2:0] lsbx;
     wire [3:0] lsby;
-    assign lsbx = pixel_x[2:0];
+    assign lsbx = ~pixel_x[2:0] ;
     assign lsby = pixel_y[3:0];
     
     reg [2:0] letter_rgb;
@@ -167,15 +169,15 @@ module proyecto1(
     //localparam maxy = 480;
     
     // Letter boundaries
-    localparam fxl = 300;
-    localparam fxr = 307;
-    localparam rxl = 316;
-    localparam rxr = 323;
-    localparam jxl = 332;
-    localparam jxr = 339;
+    localparam fxl = 296;
+    localparam fxr = 303;
+    localparam rxl = 312;
+    localparam rxr = 319;
+    localparam jxl = 328;
+    localparam jxr = 335;
     
-    localparam yt = 232;
-    localparam yb = 247;
+    localparam yt = 224;
+    localparam yb = 239;
     
     
     // letter output signals
@@ -197,15 +199,16 @@ module proyecto1(
     (jxl<=pixel_x) && (pixel_x<=jxr) &&
     (yt<=pixel_y) && (pixel_y<=yb);
     
-    always @* begin
+    always @* 
+       begin
         if (fon)
-            as <= 2'h1; 
+            as <= 2'b01; 
         else if (ron)
-            as <= 2'h2;
+            as <= 2'b10;
         else if (jon)
-            as <= 2'h1;
+            as <= 2'b11;
         else
-            as <= 2'h0;   
+            as <= 2'b00;   
        end
      
     ROM FONT(as,lsby,Data); 
@@ -246,7 +249,7 @@ module ROM (
     output reg [7:0]data 
     );
 
-    reg [5:0]adress;
+    reg [7:0]adress;
     
     always @*
         adress <= {as,lsby};
@@ -254,74 +257,74 @@ module ROM (
     always @*
         case (adress)
         
-        6'h00: data = 8'b00000000;
-        6'h01: data = 8'b00000000; 
-        6'h02: data = 8'b00000000; 
-        6'h03: data = 8'b00000000; 
-        6'h04: data = 8'b00000000; 
-        6'h05: data = 8'b00000000;  
-        6'h06: data = 8'b00000000;
-        6'h07: data = 8'b00000000; 
-        6'h08: data = 8'b00000000; 
-        6'h09: data = 8'b00000000;
-        6'h0a: data = 8'b00000000;
-        6'h0b: data = 8'b00000000; 
-        6'h0c: data = 8'b00000000; 
-        6'h0d: data = 8'b00000000;
-        6'h0e: data = 8'b00000000;
-        6'h0f: data = 8'b00000000; 
+        8'h00: data = 8'b00000000;
+        8'h01: data = 8'b00000000; 
+        8'h02: data = 8'b00000000; 
+        8'h03: data = 8'b00000000; 
+        8'h04: data = 8'b00000000; 
+        8'h05: data = 8'b00000000;  
+        8'h06: data = 8'b00000000;
+        8'h07: data = 8'b00000000; 
+        8'h08: data = 8'b00000000; 
+        8'h09: data = 8'b00000000;
+        8'h0a: data = 8'b00000000;
+        8'h0b: data = 8'b00000000; 
+        8'h0c: data = 8'b00000000; 
+        8'h0d: data = 8'b00000000;
+        8'h0e: data = 8'b00000000;
+        8'h0f: data = 8'b00000000; 
 
          //code letter F
-        6'h010: data = 8'b00111111; //
-        6'h011: data = 8'b00111111; //
-        6'h012: data = 8'b00111000; //
-        6'h013: data = 8'b00111000; //
-        6'h014: data = 8'b00111000; //
-        6'h015: data = 8'b00111000; //
-        6'h016: data = 8'b00111000; //
-        6'h017: data = 8'b11111111; //
-        6'h018: data = 8'b00111000; //
-        6'h019: data = 8'b00111000; //
-        6'h01a: data = 8'b00111000; //
-        6'h01b: data = 8'b00111000; //
-        6'h01c: data = 8'b00111000; //
-        6'h01d: data = 8'b00111000; //
-        6'h01e: data = 8'b00000000; //
-        6'h01f: data = 8'b00000000; //
+        8'h010: data = 8'b00000000; //11111111
+        8'h011: data = 8'b01111110; //11111111
+        8'h012: data = 8'b01111110; //11100000
+        8'h013: data = 8'b01100000; //11100000
+        8'h014: data = 8'b01100000; //11100000
+        8'h015: data = 8'b01100000; //11100000
+        8'h016: data = 8'b01100000; //11100000
+        8'h017: data = 8'b01111110; //11111111
+        8'h018: data = 8'b01100000; //11100000
+        8'h019: data = 8'b01100000; //11100000
+        8'h01a: data = 8'b01100000; //11100000
+        8'h01b: data = 8'b01100000; //11100000
+        8'h01c: data = 8'b01100000; //11100000
+        8'h01d: data = 8'b01100000; //11100000
+        8'h01e: data = 8'b01100000; //11100000
+        8'h01f: data = 8'b00000000; //11100000
         //code letter R
-        6'h020: data = 8'b11111111; //
-        6'h021: data = 8'b11111111; //
-        6'h022: data = 8'b11000011; //
-        6'h023: data = 8'b11000011; //
-        6'h024: data = 8'b11000011; //
-        6'h025: data = 8'b11111111; //
-        6'h026: data = 8'b11111111; //
-        6'h027: data = 8'b11110000; //
-        6'h028: data = 8'b11110000; //
-        6'h029: data = 8'b11001100; //
-        6'h02a: data = 8'b11001100; //
-        6'h02b: data = 8'b11000011; //
-        6'h02c: data = 8'b11000011; //
-        6'h02d: data = 8'b00000000; //
-        6'h02e: data = 8'b00000000; //
-        6'h02f: data = 8'b00000000; //
+        8'h020: data = 8'b00000000; //11111111
+        8'h021: data = 8'b01111100; //11100111
+        8'h022: data = 8'b01100110; //11100011
+        8'h023: data = 8'b01100110; //11100011
+        8'h024: data = 8'b01100110; //11100011
+        8'h025: data = 8'b01100110; //11100111
+        8'h026: data = 8'b01100110; //11111110
+        8'h027: data = 8'b01111100; //11111100
+        8'h028: data = 8'b01111100; //11111100
+        8'h029: data = 8'b01100110; //11101110
+        8'h02a: data = 8'b01100110; //11101110
+        8'h02b: data = 8'b01100110; //11100111
+        8'h02c: data = 8'b01100110; //11100111
+        8'h02d: data = 8'b01100110; //11100011
+        8'h02e: data = 8'b01100110; //11100011
+        8'h02f: data = 8'b00000000; //11100011
         //code letter J
-        6'h030: data = 8'b11111111; //
-        6'h031: data = 8'b11111111; //
-        6'h032: data = 8'b00001100; //
-        6'h033: data = 8'b00001100; //
-        6'h034: data = 8'b00001100; //
-        6'h035: data = 8'b00001100; //
-        6'h036: data = 8'b00001100; //
-        6'h037: data = 8'b00001100; //
-        6'h038: data = 8'b00001100; //
-        6'h039: data = 8'b00001100; //
-        6'h03a: data = 8'b00011000; //
-        6'h03b: data = 8'b00011000; //
-        6'h03c: data = 8'b00110000; //
-        6'h03d: data = 8'b01000000; //
-        6'h03e: data = 8'b11000000; //
-        6'h03f: data = 8'b00000000; //
+        8'h030: data = 8'b00000000; //00000111
+        8'h031: data = 8'b00000110; //00000111
+        8'h032: data = 8'b00000110; //00000111
+        8'h033: data = 8'b00000110; //00000111
+        8'h034: data = 8'b00000110; //00000111
+        8'h035: data = 8'b00000110; //00000111
+        8'h036: data = 8'b00000110; //00000111
+        8'h037: data = 8'b00000110; //00000111
+        8'h038: data = 8'b00000110; //00000111
+        8'h039: data = 8'b00000110; //00000111
+        8'h03A: data = 8'b00000110; //00000111
+        8'h03B: data = 8'b00000110; //00000111
+        8'h03C: data = 8'b00000110; //00001110
+        8'h03D: data = 8'b01100110; //11001110
+        8'h03E: data = 8'b00111100; //00111000
+        8'h03F: data = 8'b00000000; //00010000
             
         default : data = 8'b00000000;
     endcase
